@@ -65,30 +65,184 @@ export function ShareDialog({ closureId, existingToken, closure }: ShareDialogPr
   }
 
   const handleExportHTML = () => {
-    // Close the dialog first
     setOpen(false)
     
-    // Wait for dialog to close, then print
     setTimeout(() => {
-      window.print()
+      const formatDate = (date: string | null) => {
+        if (!date) return ""
+        return new Date(date).toLocaleDateString("es-MX", { year: "numeric", month: "2-digit", day: "2-digit" })
+      }
+
+      const hasValue = (value: any) => value !== null && value !== undefined && value !== ""
+
+      const html = `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cierre de Proyecto - ${closure.project_name}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+      color: #333;
+      line-height: 1.6;
+    }
+    .container { 
+      max-width: 1000px; 
+      margin: 0 auto; 
+      background: white;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .header { 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px 40px;
+      text-align: center;
+    }
+    .header h1 { font-size: 28px; margin-bottom: 10px; }
+    .header p { font-size: 14px; opacity: 0.9; }
+    .content { padding: 30px 40px; }
+    .section { margin-bottom: 25px; }
+    .section-title { 
+      color: #667eea;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #667eea;
+    }
+    .grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+      gap: 15px;
+    }
+    .info-item { 
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      border-left: 4px solid #667eea;
+    }
+    .info-label { 
+      font-size: 12px; 
+      color: #666;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+    .info-value { 
+      font-size: 14px; 
+      color: #333;
+      font-weight: 600;
+    }
+    .text-content { 
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      white-space: pre-wrap;
+    }
+    .list { padding-left: 20px; }
+    .list li { margin: 8px 0; }
+    .footer {
+      padding: 20px 40px;
+      background: #f8f9fa;
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+    }
+    @media print {
+      body { padding: 10px; background: white; }
+      .container { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>${closure.project_name}</h1>
+      <p>Cierre de Proyecto</p>
+    </div>
+    
+    <div class="content">
+      <div class="section">
+        <div class="section-title">Información del Proyecto</div>
+        <div class="grid">
+          ${hasValue(closure.project_id) ? `<div class="info-item"><div class="info-label">ID</div><div class="info-value">${closure.project_id}</div></div>` : ""}
+          ${hasValue(closure.sponsor) ? `<div class="info-item"><div class="info-label">Sponsor</div><div class="info-value">${closure.sponsor}</div></div>` : ""}
+          ${hasValue(closure.project_manager) ? `<div class="info-item"><div class="info-label">Project Manager</div><div class="info-value">${closure.project_manager}</div></div>` : ""}
+          ${hasValue(closure.area) ? `<div class="info-item"><div class="info-label">Área</div><div class="info-value">${closure.area}</div></div>` : ""}
+          ${hasValue(closure.start_date) ? `<div class="info-item"><div class="info-label">Inicio</div><div class="info-value">${formatDate(closure.start_date)}</div></div>` : ""}
+          ${hasValue(closure.actual_close_date) ? `<div class="info-item"><div class="info-label">Cierre</div><div class="info-value">${formatDate(closure.actual_close_date)}</div></div>` : ""}
+        </div>
+      </div>
+
+      ${hasValue(closure.executive_summary) ? `
+      <div class="section">
+        <div class="section-title">Resumen Ejecutivo</div>
+        <div class="text-content">${closure.executive_summary.replace(/\\n/g, "<br>")}</div>
+      </div>
+      ` : ""}
+
+      ${hasValue(closure.final_deliverables) && closure.final_deliverables.length > 0 ? `
+      <div class="section">
+        <div class="section-title">Entregables Finales</div>
+        <ul class="list">
+          ${closure.final_deliverables.filter((d: any) => hasValue(d.name) || hasValue(d.link)).map((d: any, i: number) => `
+            <li><strong>${d.name || "Entregable"}</strong>${hasValue(d.link) ? ` - <a href="${d.link}" target="_blank">${d.link}</a>` : ""}</li>
+          `).join("")}
+        </ul>
+      </div>
+      ` : ""}
+    </div>
+    
+    <div class="footer">
+      <p>Este documento forma parte del proceso de cierre de proyectos.</p>
+      <p>Generado el ${new Date().toLocaleDateString("es-MX")}</p>
+    </div>
+  </div>
+</body>
+</html>`
+
+      const blob = new Blob([html], { type: "text/html" })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      a.download = `cierre-${closure.project_id}-${new Date().toISOString().split("T")[0]}.html`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
     }, 100)
   }
 
   const handleExportPDF = () => {
-    // Close the dialog first
     setOpen(false)
     
-    // Wait for dialog to close, then print
     setTimeout(() => {
       const style = document.createElement("style")
       style.textContent = `
         @media print {
-          body { margin: 0; padding: 20px; }
-          .bg-gradient-to-br, .bg-gradient-to-r { background: #1e3a8a !important; }
-          .text-blue-200, .text-blue-300, .text-blue-400 { color: #1e3a8a !important; }
-          .border-blue-900, .border-blue-900\\/50 { border-color: #1e40af !important; }
-          button, .hidden { display: none !important; }
-          .container { max-width: 100% !important; }
+          @page { margin: 0.5cm; }
+          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          body { 
+            margin: 0; 
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+          }
+          .container { 
+            max-width: 100%;
+            margin: 0;
+            box-shadow: none !important;
+          }
+          .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; }
+          .section-title { border-color: #667eea !important; }
+          .info-item { border-left-color: #667eea !important; }
+          button, nav, header > div:last-child { display: none !important; }
+          .min-h-screen { min-height: auto !important; }
         }
       `
       document.head.appendChild(style)
