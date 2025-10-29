@@ -6,8 +6,7 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "eslint .",
-    "start": "next start",
-    "vercel-build": "pnpm install && pnpm build"
+    "start": "next start"
   },
   "engines": {
     "node": ">=18.0.0"
