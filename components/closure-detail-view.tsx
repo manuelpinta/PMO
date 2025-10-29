@@ -374,9 +374,6 @@ export function ClosureDetailView({ closure, isSharedView = false }: ClosureDeta
                 </Link>
               </Button>
             )}
-            {isSharedView && (
-              <ShareDialog closureId={closure.id} existingToken={closure.share_token} closure={closure} />
-            )}
           </div>
 
           {/* Footer Note */}

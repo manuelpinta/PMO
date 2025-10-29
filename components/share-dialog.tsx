@@ -65,25 +65,36 @@ export function ShareDialog({ closureId, existingToken, closure }: ShareDialogPr
   }
 
   const handleExportHTML = () => {
-    window.print()
+    // Close the dialog first
+    setOpen(false)
+    
+    // Wait for dialog to close, then print
+    setTimeout(() => {
+      window.print()
+    }, 100)
   }
 
   const handleExportPDF = () => {
-    // Add print styles
-    const style = document.createElement("style")
-    style.textContent = `
-      @media print {
-        body { margin: 0; padding: 20px; }
-        .bg-gradient-to-br, .bg-gradient-to-r { background: #1e3a8a !important; }
-        .text-blue-200, .text-blue-300, .text-blue-400 { color: #1e3a8a !important; }
-        .border-blue-900, .border-blue-900\\/50 { border-color: #1e40af !important; }
-        button, .hidden { display: none !important; }
-        .container { max-width: 100% !important; }
-      }
-    `
-    document.head.appendChild(style)
-    window.print()
-    document.head.removeChild(style)
+    // Close the dialog first
+    setOpen(false)
+    
+    // Wait for dialog to close, then print
+    setTimeout(() => {
+      const style = document.createElement("style")
+      style.textContent = `
+        @media print {
+          body { margin: 0; padding: 20px; }
+          .bg-gradient-to-br, .bg-gradient-to-r { background: #1e3a8a !important; }
+          .text-blue-200, .text-blue-300, .text-blue-400 { color: #1e3a8a !important; }
+          .border-blue-900, .border-blue-900\\/50 { border-color: #1e40af !important; }
+          button, .hidden { display: none !important; }
+          .container { max-width: 100% !important; }
+        }
+      `
+      document.head.appendChild(style)
+      window.print()
+      document.head.removeChild(style)
+    }, 100)
   }
 
   return (
@@ -171,7 +182,7 @@ export function ShareDialog({ closureId, existingToken, closure }: ShareDialogPr
                 className="border-blue-700 text-blue-300 hover:bg-blue-950 bg-transparent"
               >
                 <FileCode className="mr-2 h-4 w-4" />
-                Imprimir
+                Exportar HTML
               </Button>
             </div>
             <p className="text-xs text-blue-200/70">
