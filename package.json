@@ -7,11 +7,10 @@
     "dev": "next dev",
     "lint": "eslint .",
     "start": "next start",
-    "vercel-build": "pnpm install --no-frozen-lockfile && pnpm build"
+    "vercel-build": "pnpm install && pnpm build"
   },
   "engines": {
-    "node": ">=18.0.0",
-    "pnpm": ">=8.0.0"
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
