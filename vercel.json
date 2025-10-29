@@ -1,7 +1,6 @@
 {
-  "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install --legacy-peer-deps",
+  "buildCommand": "corepack enable && corepack prepare pnpm@latest --activate && pnpm install && pnpm build",
+  "devCommand": "pnpm dev",
   "framework": "nextjs",
   "regions": ["iad1"]
 }
