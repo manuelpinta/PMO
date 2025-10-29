@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ShareDialog } from "@/components/share-dialog"
+import { ExportButtons } from "@/components/export-buttons"
 import Link from "next/link"
 import { ArrowLeft, ExternalLink, FolderOpen, Edit } from "lucide-react"
 import { DeleteClosureDialog } from "@/components/delete-closure-dialog"
@@ -43,6 +44,7 @@ export function ClosureDetailView({ closure, isSharedView = false }: ClosureDeta
             </div>
             {!isSharedView && (
               <div className="flex items-center gap-2">
+                <ExportButtons closure={closure} />
                 <Link href={`/closures/${closure.id}/edit`}>
                   <Button variant="ghost" className="text-white hover:bg-blue-800">
                     <Edit className="mr-2 h-4 w-4" />
@@ -354,6 +356,7 @@ export function ClosureDetailView({ closure, isSharedView = false }: ClosureDeta
 
           {/* Action Buttons */}
           <div className="flex gap-4 pt-4">
+            <ExportButtons closure={closure} />
             {hasValue(closure.documentation_link) && (
               <Button asChild variant="default" className="flex-1 bg-cyan-600 hover:bg-cyan-700">
                 <a href={closure.documentation_link} target="_blank" rel="noopener noreferrer">

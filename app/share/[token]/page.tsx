@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import { notFound } from "next/navigation"
-import type { ProjectWithClosure } from "@/lib/types"
-import { StakeholderView } from "@/components/stakeholder-view"
+import { ClosureDetailView } from "@/components/closure-detail-view"
 
 export default async function SharedClosurePage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params
@@ -9,26 +8,14 @@ export default async function SharedClosurePage({ params }: { params: Promise<{ 
 
   const { data: closure, error } = await supabase
     .from("project_closures")
-    .select(
-      `
-      *,
-      projects (*)
-    `,
-    )
+    .select("*")
     .eq("share_token", token)
-    .eq("is_published", true)
+    .not("share_token", "is", null)
     .single()
 
   if (error || !closure) {
     notFound()
   }
 
-  // Transform the data structure to match ProjectWithClosure
-  const project = closure.projects as any
-  const projectWithClosure: ProjectWithClosure = {
-    ...project,
-    project_closures: [closure],
-  }
-
-  return <StakeholderView project={projectWithClosure} closure={closure} />
+  return <ClosureDetailView closure={closure} isSharedView={true} />
 }
