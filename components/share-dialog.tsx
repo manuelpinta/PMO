@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Share2, Copy, Check, Loader2, Link2Off, FileText, FileCode } from "lucide-react"
+import { Share2, Copy, Check, Loader2, Link2Off, FileCode } from "lucide-react"
 import { generateShareToken, revokeShareToken } from "@/app/actions/share"
 import type { ProjectClosure } from "@/lib/types"
 
@@ -188,27 +188,6 @@ export function ShareDialog({ closureId, existingToken, closure }: ShareDialogPr
     }, 100)
   }
 
-  const handleExportPDF = () => {
-    setOpen(false)
-    
-    setTimeout(() => {
-      const style = document.createElement("style")
-      style.textContent = `
-        @media print {
-          @page { margin: 0.5cm; size: A4 landscape; }
-          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-          body { margin: 0; padding: 0; }
-          button, nav, header > div:last-child { display: none !important; }
-          .container { max-width: 100% !important; margin: 0 !important; }
-          .grid { grid-template-columns: repeat(3, 1fr) !important; }
-          .section { margin-bottom: 10px !important; padding-bottom: 8px !important; }
-        }
-      `
-      document.head.appendChild(style)
-      window.print()
-      document.head.removeChild(style)
-    }, 100)
-  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -258,18 +237,12 @@ export function ShareDialog({ closureId, existingToken, closure }: ShareDialogPr
 
           <div className="space-y-3">
             <h3 className="text-lg font-semibold text-blue-400 mb-3">Exportar documento</h3>
-            <div className="grid grid-cols-2 gap-3">
-              <Button onClick={handleExportPDF} variant="outline" className="border-blue-700 text-blue-300 hover:bg-blue-950 bg-transparent">
-                <FileText className="mr-2 h-4 w-4" />
-                Exportar PDF
-              </Button>
-              <Button onClick={handleExportHTML} variant="outline" className="border-blue-700 text-blue-300 hover:bg-blue-950 bg-transparent">
-                <FileCode className="mr-2 h-4 w-4" />
-                Exportar HTML
-              </Button>
-            </div>
+            <Button onClick={handleExportHTML} variant="outline" className="w-full border-blue-700 text-blue-300 hover:bg-blue-950 bg-transparent">
+              <FileCode className="mr-2 h-4 w-4" />
+              Exportar HTML
+            </Button>
             <p className="text-xs text-blue-200/70">
-              PDF: Landscape con 3 columnas para optimizar espacio
+              Descarga un archivo HTML con toda la información del cierre de proyecto
             </p>
           </div>
         </div>
